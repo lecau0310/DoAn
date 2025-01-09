@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Thiết Bị Thông Minh</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-container, .device-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .info-item, .device-item {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 150px;
+            margin: 10px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8f8f8;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+            .info-item:hover, .device-item:hover {
+                transform: scale(1.05);
+            }
+
+        .info-icon, .device-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .info-value, .device-status {
+            font-size: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .settings-button {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+            .settings-button:hover {
+                transform: scale(1.1);
+            }
+
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .confirmSettings {
+            background-color: #4CAF50; /* Màu xanh */
+            margin-top: 10px;
+            padding: 8px 12px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+            .confirmSettings:hover {
+                background-color: #45a049; /* Màu xanh đậm khi hover */
+            }
+
+        .close-button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .close-button:hover {
+                background-color: #d32f2f;
+            }
+
+        .input-field {
+            margin: 10px 0;
+        }
+
+            .input-field input {
+                padding: 8px;
+                width: 80%;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                transition: border-color 0.3s;
+            }
+
+                .input-field input:focus {
+                    border-color: #4CAF50;
+                    outline: none;
+                }
+
+        .mode-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+            .mode-container div {
+                margin-right: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+        .buttonCD {
+            background-color: #FF0000; /* Màu nền */
+            color: white; /* Màu chữ */
+            padding: 8px 25px; /* Khoảng cách bên trong */
+            border: none; /* Bỏ viền */
+            border-radius: 5px; /* Bo góc */
+            font-size: 15px; /* Kích thước chữ */
+            cursor: pointer; /* Con trỏ chuột */
+            transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu và phóng to */
+        }
+
+            .buttonCD:hover {
+                background-color: #EE0000; /* Màu nền khi hover */
+                transform: scale(1.05); /* Phóng to nhẹ khi hover */
+            }
+
+            .buttonCD:active {
+                transform: scale(0.95); /* Thu nhỏ khi nhấn */
+            }
+        .buttonDB {
+            background-color: #008000; /* Màu nền */
+            color: white; /* Màu chữ */
+            padding: 8px 25px; /* Khoảng cách bên trong */
+            border: none; /* Bỏ viền */
+            border-radius: 5px; /* Bo góc */
+            font-size: 15px; /* Kích thước chữ */
+            cursor: pointer; /* Con trỏ chuột */
+            transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu và phóng to */
+        }
+
+            .buttonDB:hover {
+                background-color: #00FF00; /* Màu nền khi hover */
+                transform: scale(1.05); /* Phóng to nhẹ khi hover */
+            }
+
+            .buttonDB:active {
+                transform: scale(0.95); /* Thu nhỏ khi nhấn */
+            }
+
+        .buttonTT {
+            background-color: #4CAF50; /* Màu nền */
+            color: white; /* Màu chữ */
+            padding: 5px 15px; /* Khoảng cách bên trong */
+            border: none; /* Bỏ viền */
+            border-radius: 5px; /* Bo góc */
+            font-size: 10px; /* Kích thước chữ */
+            cursor: pointer; /* Con trỏ chuột */
+            transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu và phóng to */
+        }
+
+            .buttonTT:hover {
+                background-color: #45a049; /* Màu nền khi hover */
+                transform: scale(1.05); /* Phóng to nhẹ khi hover */
+            }
+
+            .buttonTT:active {
+                transform: scale(0.95); /* Thu nhỏ khi nhấn */
+            }
+        .device-name {
+            font-weight: bold; /* In đậm */
+            margin-bottom: 5px; /* Khoảng cách dưới chữ "Bơm" */
+        }
+
+        .device-status {
+            display: inline-block; /* Hiển thị dưới dạng khối nội tuyến */
+            width: 100px; /* Cố định chiều rộng */
+            text-align: center; /* Căn giữa chữ */
+            white-space: nowrap; /* Ngăn không cho chữ nhảy dòng */
+        }
+        #logo1{
+        position: absolute;
+        top: 90px; /* Tọa độ dọc */
+        left: 300px; /* Tọa độ ngang */
+        width: 250px; /* Kích thước logo */
+        }
+        #logo2{
+        position: absolute;
+        top: 75px; /* Tọa độ dọc */
+        left: 1000px; /* Tọa độ ngang */
+        width: 150px; /* Kích thước logo */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>ỨNG DỤNG CÔNG NGHỆ LORA TRONG NÔNG NGHIỆP THÔNG MINH TRÊN NỀN TẢNG OPENCV-PYTHON</h1>
+        <h1>GVHD : Th.S Trần Duy Chung</h1>
+        <h1>SVTH: Lê Văn Cầu - Lê Quang Thành</h1>
+        <img id="logo1" src="logo1.jpg">
+        <img id="logo2" src="logo2.jpg">
+        <br></br>
+        <div class="settings-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="mode-container">
+                <div>
+                    <strong>Chế độ hoạt động:</strong>
+                </div>
+                <div id="TTCD">Auto</div>
+                <button class="buttonCD" id="NBCD">Chuyển Chế Độ</button>
+		<strong style="margin-right: 20px;"></strong> <!-- Tạo khoảng cách -->
+		<button class="buttonDB" onclick="goBack()">Dự Báo Thời Tiết</button>
+            </div>
+            <button class="settings-button" onclick="openPopup()">
+                <img src="https://img.icons8.com/material-rounded/50/000000/settings.png" class="settings-icon" alt="Cài đặt">
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>Thông Số Môi Trường</h2>
+            <div class="info-container">
+                <div class="info-item">
+                    <img src="https://img.icons8.com/?size=100&id=Ip0sudtehGiR&format=png&color=000000" class="info-icon" >
+                    <div>
+                        <div>Điện Áp</div>
+                        <div class="info-value" id="GTDienAp">220 V</div>
+                    </div>
+                </div>
+                                <div class="info-item">
+                    <img src="https://img.icons8.com/?size=100&id=39434&format=png&color=000000" class="info-icon" >
+                    <div>
+                        <div>Công Suất</div>
+                        <div class="info-value" id="GTCongSuat">1 kW</div>
+                    </div>
+                </div>
+                                <div class="info-item">
+                    <img src="https://img.icons8.com/?size=100&id=ETtWcACCFuZH&format=png&color=000000" class="info-icon" >
+                    <div>
+                        <div>Lưu Lượng</div>
+                        <div class="info-value" id="GTLuuLuong">0 L</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <img src="https://img.icons8.com/color/50/000000/temperature.png" class="info-icon" alt="Nhiệt độ">
+                    <div>
+                        <div>Nhiệt độ</div>
+                        <div class="info-value" id="ND">20 độ C</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <img src="https://img.icons8.com/color/50/000000/humidity.png" class="info-icon" alt="Độ ẩm không khí">
+                    <div>
+                        <div>Độ ẩm không khí</div>
+                        <div class="info-value" id="DA">60%</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                        <img id="logocbas" src="https://img.icons8.com/color/50/000000/moon.png" class="info-icon" alt="Buổi tối">
+                        <div>
+                            <div id="textcbas">Buổi Tối</div>
+                        </div>
+                </div>
+
+                <div class="info-item" >
+                    <img id="logocbm" src="https://img.icons8.com/color/50/000000/rain.png" class="info-icon" alt="Trời mưa">
+                    <div>
+                        <div id="textcbm">Trời Mưa</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <img src="https://img.icons8.com/color/50/000000/water.png" class="info-icon" alt="Mực nước">
+                    <div>
+                        <div>Mực Nước</div>
+                        <div  id="textcbmn" class="info-value">Cao</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <img src="https://img.icons8.com/color/50/000000/soil.png" class="info-icon" alt="Đất">
+                    <div>
+                        <div>Độ ẩm đất</div>
+                        <div  id="textcbdad" class="info-value">Cao</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Quản Lý Thiết Bị</h2>
+            <div class="device-container">
+                <div class="device-item">
+                    <img src="https://img.icons8.com/?size=100&id=ehDsuflHffkO&format=png&color=000000" class="device-icon" alt="Bơm"> <!-- Biểu tượng bơm -->
+                    <div>
+                        <div class="device-name">Bơm</div>
+                        <div class="device-status" id="TTBom">Đang sử dụng</div>
+                        <button class="buttonTT" id="TTBomm">Tắt Thiết Bị</button>
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <img src="https://img.icons8.com/color/50/000000/fan.png" class="device-icon" alt="Quạt">
+                    <div>
+                        <div class="device-name">Quạt</div>
+                        <div class="device-status" id="TTQuat">Đang sử dụng</div>
+                        <button class="buttonTT" id="TTQuatt">Tắt Thiết Bị</button>
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <img src="https://img.icons8.com/color/50/000000/light-on.png" class="device-icon" alt="Đèn">
+                    <div>
+                        <div class="device-name">Đèn</div>
+                        <div class="device-status" id="TTDen">Đang sử dụng</div>
+                        <button class="buttonTT" id="TTDenn">Tắt Thiết Bị</button>
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <img src="https://img.icons8.com/color/50/000000/bell.png" class="device-icon" alt="Chuông">
+                    <div>
+                        <div class="device-name">Chuông</div>
+                        <div class="device-status" id="TTChuong">Đang sử dụng</div>
+                        <button class="buttonTT" id="TTChuongg">Tắt Thiết Bị</button>
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <img src="https://img.icons8.com/color/50/000000/clothes.png" class="device-icon" alt="Dây Phơi">
+                    <div>
+                        <div class="device-name">Dây Phơi</div>
+                        <div class="device-status" id="TTRem">Đang sử dụng</div>
+                        <button class="buttonTT" id="TTRemm">Tắt Thiết Bị</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup" id="settingsPopup">
+        <div class="popup-content">
+            <h2>Thông Số Cài Đặt</h2>
+            <div class="input-field">
+                <label for="temperature">Nhiệt độ đặt:</label>
+                <input type="number" id="temperature" placeholder="Nhập nhiệt độ" />
+            </div>
+            <div class="input-field">
+                <label for="humidity">Độ ẩm đặt:</label>
+                <input type="number" id="humidity" placeholder="Nhập độ ẩm" />
+            </div>
+            <button class="confirmSettings" onclick="confirmSettings()">Xác Nhận</button>
+            <button class="close-button" onclick="closePopup()">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        function openPopup() {
+            document.getElementById('settingsPopup').style.display = 'flex';
+            loadCurrentSettings();
+        }
+
+        function closePopup() {
+            document.getElementById('settingsPopup').style.display = 'none';
+        }
+
+        function loadCurrentSettings() {
+            const temperatureRef = firebase.database().ref('GiaTriDat/ND');
+            const humidityRef = firebase.database().ref('GiaTriDat/DA');
+
+            temperatureRef.once('value').then(snapshot => {
+                const currentTemperature = snapshot.val();
+                document.getElementById('temperature').value = currentTemperature || ''; // Đặt giá trị hoặc để trống nếu không có
+            });
+
+            humidityRef.once('value').then(snapshot => {
+                const currentHumidity = snapshot.val();
+                document.getElementById('humidity').value = currentHumidity || ''; // Đặt giá trị hoặc để trống nếu không có
+            });
+        }
+
+        function confirmSettings() {
+            const temperature = document.getElementById('temperature').value;
+            const humidity = document.getElementById('humidity').value;
+
+            // Gửi giá trị mới lên Firebase
+            firebase.database().ref('GiaTriDat/ND').set(temperature);
+            firebase.database().ref('GiaTriDat/DA').set(humidity);
+
+            closePopup();
+        }
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+    <script>
+        // Cấu hình Firebase của bạn
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjJwgqwhCa_HOihKNrcMJbCvtlchnZy8Q",
+            authDomain: "loranongnghiep.firebaseapp.com",
+            projectId: "loranongnghiep",
+            storageBucket: "loranongnghiep.firebasestorage.app",
+            messagingSenderId: "268378315726",
+            appId: "1:268378315726:web:47f5ee79e517576459a99f",
+            measurementId: "G-RXBNH483J0"
+        };
+        // Khởi tạo Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script>
+        // Hàm lắng nghe sự thay đổi trạng thái thiết bị
+        function listenDeviceState(deviceRefName, buttonId, statusId) {
+            firebase.database().ref(deviceRefName).on('value', function (snapshot) {
+                var currentValue = snapshot.val();
+                var button = document.getElementById(buttonId);
+                var statusElement = document.getElementById(statusId);
+
+                if (currentValue === 1) {
+                    button.style.backgroundColor = '#FF5733'; // Màu đỏ
+                    button.style.color = '#FFFFFF'; // Màu chữ trắng
+                    button.textContent = 'Tắt Thiết Bị';
+                    statusElement.textContent = ' Đang sử dụng';
+                    statusElement.style.color = '#4CAF50'; // Màu xanh cho "Đang sử dụng"
+                } else {
+                    button.style.backgroundColor = '#4CAF50'; // Màu xanh lá
+                    button.style.color = '#FFFFFF'; // Màu chữ trắng
+                    button.textContent = 'Bật Thiết Bị';
+                    statusElement.textContent = 'Không sử dụng';
+                    statusElement.style.color = '#FF5733'; // Màu đỏ cho "Không sử dụng"
+                }
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            var DienApRef = firebase.database().ref('CamBien/DienAp');
+
+            DienApRef.on('value', function (snapshot) {
+                var DienApValue = snapshot.val();
+                var DienApElement = document.getElementById('GTDienAp');
+
+                // Cập nhật giá trị nhiệt độ trong div
+                DienApElement.textContent = DienApValue + ' V';
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var CongSuatRef = firebase.database().ref('CamBien/CongSuat');
+
+            CongSuatRef.on('value', function (snapshot) {
+                var CongSuatValue = snapshot.val();
+                var CongSuatElement = document.getElementById('GTCongSuat');
+
+                // Cập nhật giá trị nhiệt độ trong div
+                CongSuatElement.textContent = CongSuatValue + ' kW';
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var LuuLuongRef = firebase.database().ref('CamBien/LuuLuong');
+
+            LuuLuongRef.on('value', function (snapshot) {
+                var LuuLuongValue = snapshot.val();
+                var LuuLuongElement = document.getElementById('GTLuuLuong');
+
+                // Cập nhật giá trị nhiệt độ trong div
+                LuuLuongElement.textContent = LuuLuongValue + ' L';
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var temperatureRef = firebase.database().ref('CamBien/ND');
+
+            temperatureRef.on('value', function (snapshot) {
+                var temperatureValue = snapshot.val();
+                var temperatureElement = document.getElementById('ND');
+
+                // Cập nhật giá trị nhiệt độ trong div
+                temperatureElement.textContent = temperatureValue + ' độ C';
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var temperatureRef = firebase.database().ref('CamBien/DA');
+
+            temperatureRef.on('value', function (snapshot) {
+                var temperatureValue = snapshot.val();
+                var temperatureElement = document.getElementById('DA');
+
+                // Cập nhật giá trị nhiệt độ trong div
+                temperatureElement.textContent = temperatureValue + ' %';
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var cbASRef = firebase.database().ref('CamBien/CBAS');
+
+            cbASRef.on('value', function (snapshot) {
+                var cbASValue = snapshot.val();
+                var logoCBAS = document.getElementById('logocbas');
+                var textCBAS = document.getElementById('textcbas');
+
+                if (cbASValue === 0) {
+                    logoCBAS.src = "https://img.icons8.com/color/50/000000/sun.png"; // Logo Buổi sáng
+                    textCBAS.textContent = "Buổi Sáng";
+                } else if (cbASValue === 1) {
+                    logoCBAS.src = "https://img.icons8.com/color/50/000000/moon.png"; // Logo Buổi tối
+                    textCBAS.textContent = "Buổi Tối";
+                }
+            });
+        });
+        var cbMRef = firebase.database().ref('CamBien/CBM');
+        cbMRef.on('value', function (snapshot) {
+            var cbMValue = snapshot.val();
+            var logoCBM = document.getElementById('logocbm');
+            var textCBM = document.getElementById('textcbm');
+
+            if (cbMValue ===0) {
+                logoCBM.src = "https://img.icons8.com/color/50/000000/rain.png"; // Logo Trời mưa
+                textCBM.textContent = "Trời Mưa";
+            } else if (cbMValue ===1) {
+                logoCBM.src = "https://img.icons8.com/?size=100&id=19543&format=png&color=000000"; // Logo Trời trong
+                textCBM.textContent = "Trời Trong";
+            }
+        });
+        var cbmnRef = firebase.database().ref('CamBien/CBMN');
+        cbmnRef.on('value', function (snapshot) {
+            var cbmnValue = snapshot.val();
+            var textCBMN = document.getElementById('textcbmn');
+
+            if (cbmnValue === 0) {
+                textCBMN.textContent = "Cao";
+            } else if (cbmnValue === 1) {
+                textCBMN.textContent = "Thấp";
+            }
+        });
+
+        var cbdadRef = firebase.database().ref('CamBien/CBDAD');
+        cbdadRef.on('value', function (snapshot) {
+            var cbdadValue = snapshot.val();
+            var textCBDAD = document.getElementById('textcbdad');
+
+            if (cbdadValue === 0) {
+                textCBDAD.textContent = "Cao";
+            } else if (cbdadValue === 1) {
+                textCBDAD.textContent = "Thấp";
+            }
+        });
+
+        var ttcdRef = firebase.database().ref('CheDo/TT');
+        ttcdRef.on('value', function (snapshot) {
+            var ttcdValue = snapshot.val();
+            var textTTCD = document.getElementById('TTCD');
+
+            if (ttcdValue === "0") {
+                textTTCD.textContent = "Manual";
+            } else if (ttcdValue === "1") {
+                textTTCD.textContent = "Auto";
+            }
+        });
+
+        document.getElementById('NBCD').addEventListener('click', function () {
+            var chedoRef = firebase.database().ref('CheDo/TT');
+
+            chedoRef.once('value', function (snapshot) {
+                var currentValue = snapshot.val();
+                var newValue = (currentValue === "1") ? "0" : "1"; // Chuyển đổi giữa 0 và 1
+                chedoRef.set(newValue); // Gửi giá trị mới về Firebase
+            });
+        });
+
+
+        // Gán sự kiện click cho từng nút
+        function isManualMode(callback) {
+            var chedoRef = firebase.database().ref('CheDo/TT');
+            chedoRef.once('value', function (snapshot) {
+                var chedoValue = snapshot.val();
+                callback(chedoValue === "0"); // Chỉ cho phép khi chế độ là 0
+            });
+        }
+
+        // Thêm sự kiện click cho các nút
+        document.getElementById('TTBomm').addEventListener('click', function () {
+            isManualMode(function (isAllowed) {
+                if (isAllowed) toggleDevice('ThietBi/BOM');
+            });
+        });
+
+        document.getElementById('TTQuatt').addEventListener('click', function () {
+            isManualMode(function (isAllowed) {
+                if (isAllowed) toggleDevice('ThietBi/QUAT');
+            });
+        });
+
+        document.getElementById('TTDenn').addEventListener('click', function () {
+            isManualMode(function (isAllowed) {
+                if (isAllowed) toggleDevice('ThietBi/DEN');
+            });
+        });
+
+        document.getElementById('TTChuongg').addEventListener('click', function () {
+            isManualMode(function (isAllowed) {
+                if (isAllowed) toggleDevice('ThietBi/CHUONG');
+            });
+        });
+
+        document.getElementById('TTRemm').addEventListener('click', function () {
+            isManualMode(function (isAllowed) {
+                if (isAllowed) toggleDevice('ThietBi/REM');
+            });
+        });
+
+        // Hàm chuyển đổi trạng thái thiết bị
+        function toggleDevice(deviceRefName) {
+            var deviceRef = firebase.database().ref(deviceRefName);
+            deviceRef.once('value', function (snapshot) {
+                var currentValue = snapshot.val();
+                var newValue = (currentValue === 1) ? 0 : 1;
+                deviceRef.set(newValue);
+            });
+        }
+
+        // Lắng nghe trạng thái cho từng thiết bị
+        listenDeviceState('ThietBi/BOM', 'TTBomm', 'TTBom');
+        listenDeviceState('ThietBi/QUAT', 'TTQuatt', 'TTQuat');
+        listenDeviceState('ThietBi/DEN', 'TTDenn', 'TTDen');
+        listenDeviceState('ThietBi/CHUONG', 'TTChuongg', 'TTChuong');
+        listenDeviceState('ThietBi/REM', 'TTRemm', 'TTRem');
+
+    // Hàm quay lại trang chính (Main.html)
+    function goBack() {
+      window.location.href = "dashboard.html"; // Điều hướng tới trang Main.html
+    }
+
+    </script>
+
+
+
+
+
+</body>
+</html >

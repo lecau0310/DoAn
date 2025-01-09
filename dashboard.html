@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dự Báo Thời Tiết 7 Ngày</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #3498db;
+    }
+
+    select {
+      padding: 10px;
+      width: 100%;
+      font-size: 1rem;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .weather-info {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .weather-day {
+      background: #f9f9f9;
+      border-radius: 5px;
+      margin: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      min-width: 200px; /* Đảm bảo mỗi phần thông tin đủ rộng */
+      text-align: center;
+    }
+
+    .weather-day h3 {
+      font-size: 1.2rem;
+      color: #3498db;
+    }
+
+    .weather-day p {
+      margin: 5px 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    /* Nút quay lại */
+    .back-btn {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: center;
+      display: block;
+      margin: 20px auto;
+    }
+
+    .back-btn:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Dự Báo Thời Tiết 7 Ngày</h1>
+      <p>Chọn thành phố để xem thời tiết trong 7 ngày</p>
+    </header>
+    <main>
+      <select id="city-select" onchange="getWeather()">
+        <option value="16.0471,108.2068">Đà Nẵng</option>
+        <option value="21.0285,105.8542">Hà Nội</option>
+        <option value="10.8231,106.6297">TP.HCM</option>
+      </select>
+      <div id="weather-info" class="weather-info">
+        <!-- Thông tin thời tiết 7 ngày sẽ hiển thị ở đây -->
+      </div>
+      <!-- Nút quay lại -->
+      <button class="back-btn" onclick="goBack()">Quay lại trang chính</button>
+    </main>
+    <footer>
+      <p>&copy; 2024 Dự Báo Thời Tiết</p>
+    </footer>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById('city-select').value;
+      const [latitude, longitude] = city.split(',');
+
+      const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Asia%2FHo_Chi_Minh`;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error('Không thể lấy dữ liệu thời tiết.');
+        }
+
+        const data = await response.json();
+
+        const days = data.daily.time;
+        const maxTemps = data.daily.temperature_2m_max;
+        const minTemps = data.daily.temperature_2m_min;
+        const precipitations = data.daily.precipitation_sum;
+
+        let weatherHtml = "<h2>Dự Báo Thời Tiết 7 Ngày</h2>";
+
+        for (let i = 0; i < days.length; i++) {
+          weatherHtml += `
+            <div class="weather-day">
+              <h3>${new Date(days[i]).toLocaleDateString()}</h3>
+              <p><strong>Nhiệt Độ Cao Nhất:</strong> ${maxTemps[i]} °C</p>
+              <p><strong>Nhiệt Độ Thấp Nhất:</strong> ${minTemps[i]} °C</p>
+              <p><strong>Lượng Mưa:</strong> ${precipitations[i]} mm</p>
+            </div>
+          `;
+        }
+
+        const weatherInfoDiv = document.getElementById("weather-info");
+        weatherInfoDiv.innerHTML = weatherHtml;
+
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu thời tiết:', error);
+        alert('Không thể lấy dữ liệu thời tiết. Vui lòng thử lại sau.');
+      }
+    }
+
+    // Hàm quay lại trang chính (Main.html)
+    function goBack() {
+      window.location.href = "Main.html"; // Điều hướng tới trang Main.html
+    }
+
+    window.onload = getWeather;
+  </script>
+</body>
+</html>
